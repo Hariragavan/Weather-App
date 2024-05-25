@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+
+  <style type="text/css">
+        body{
+              margin: 0;
+              padding: 0;
+              background-color: #1f1f1f;
+              background-image: url('https://th.bing.com/th/id/R.41f3c302639330662fb0d67a57856bbf?rik=jT48piLBjsYxFw&pid=ImgRaw&r=0');
+              background-size: cover;
+              background-repeat: no-repeat;
+              height: 100vh;
+              width: 100%;
+             color: whitesmoke;
+
+        }
+        input {
+          outline: none;
+          border: 0px;
+          background-color: transparent;
+          text-align: center;
+          width: 100%;
+          
+        }
+        .input-container{
+          padding: 8px 15px;
+          background-color: rgba(255,255,255,0.6) ;
+          width: 300px;
+          border-radius: 10px;
+        }
+
+        .cityname{
+
+          margin-top: 45px;
+          font-size: 25px;
+          font-family: verdana;
+        }
+
+        .datetime{
+          margin-top: 45px;
+          font-size: 25px;
+          font-family: verdana;
+        }
+
+        .weather-container{
+
+          padding: 25px 40px;
+          padding-bottom: 10px;
+          width: 250px;
+          border-radius: 30px;
+          border: 2px solid rgb(255, 255, 255);
+          background-color: rgba(255,255,255,0.3);
+          margin-top: 50px;
+          -webkit-backdrop-filter: blur(2px);
+           backdrop-filter: blur(2px);
+          
+
+        }
+        .weather-container > h1{
+
+        font-size: 60px;
+        margin: 0px;
+        font-family: monospace;
+        font-weight: bold;
+        }
+
+        .weather-container >p{
+        font-size:16 px;
+        margin-top: 5px;
+        margin-bottom: 0px;;
+        }
+
+        h3{
+          margin-top: 60px;
+          margin-bottom: 0px;
+          font-size: 30px;
+          font-family: sans-serif;
+        }
+
+        .wrapper{
+          height: 100%;
+          width: 100%;
+          background-color: rgba(0,0,0,0.3);
+        }
+
+        .input-container:focus-within{
+          box-shadow: 0px  10px 20px rgba(27, 165, 245, 0.466);
+        }
+
+  </style>
+
+</head>
+
+<body id="body">
+     <div class="wrapper">
+     <center>
+      <br>
+
+     <h1>Enter your city name</h1>
+
+     <div class="input-container">
+
+      <input type="text" placeholder="Enter your city name" id="input">
+
+     </div> 
+
+        <h2 id ="cityname" class="cityname">Erode,IN</h2>
+        <h2 id ="datetime" class="datetime">24th april 2025, wed</h2>
+
+        <div id="weather-container" class="weather-container">
+          <h1 id="main">21°C</h1>
+          <p id="feelslike">Feels Like 20</p>
+        </div>
+
+        <h3 id="discription">Less clouds</h3>
+
+     </center>
+    </div>
+</body>
+
+<script type="text/javascript">
+  const input = document.getElementById('input');
+  const cityname = document.getElementById('cityname');
+  const datetime = document.getElementById('datetime');
+  const main = document.getElementById('main');
+  const feelslike = document.getElementById('feelslike');
+  const discription = document.getElementById('discription');
+  const body = document.getElementById('body');
+
+  async function fetchData(city){
+    let response = await fetch("https://api.openweathermap.org/data/2.5/weather?q=" + city + " &units=metric&APPID=4fd239414e1c53315dd1cb53ed561e60")
+    response = await response.json()
+    console.log(response) 
+    return response
+    }
+
+    const changeBackground = (temp) => {
+        if (temp <5){
+            body.style.backgroundImage = 'url("https://th.bing.com/th/id/R.41f3c302639330662fb0d67a57856bbf?rik=jT48piLBjsYxFw&pid=ImgRaw&r=0")'
+        }
+        else if(temp >= 5 && temp < 10){
+            body.style.backgroundImage = 'url("https://th.bing.com/th/id/R.ca6b9cdb762eafe7ab413aaeb66dc85a?rik=l%2fOzfsEAH0bqIA&pid=ImgRaw&r=0")'
+        }else if(temp >= 10 && temp < 20){
+            body.style.backgroundImage = 'url("https://pbs.twimg.com/media/FekqtUoVIAApJR0.jpg")'
+        }else if(temp >= 20 && temp < 30) {
+            body.style.backgroundImage = 'url("https://wallpapercave.com/wp/wp7378279.jpg")'
+        }else if(temp >= 30 && temp <40) {
+            body.style.backgroundImage = 'url("https://wallpaperaccess.com/full/3815729.jpg")'
+        }else if(temp >= 40 ) {
+            body.style.backgroundImage = 'url("https://i.pinimg.com/originals/57/c5/3f/57c53f86f91b91d9bc28f20c7ca25b58.jpg")'
+        }
+    
+    }
+
+   
+
+    function handleChange(event){
+        fetchData(event.target.value).then((response) => {
+          changeBackground(response.main.temp)
+          main.innerText = Math.round(response.main.temp) + "°C"
+          feelslike.innerText = "Feels Like " + response.main.feels_like
+          cityname.innerText =response.name +", "+response.sys.country
+          discription.innerText = response.weather[0].main
+          let date = new Date(response.dt*1000-(response.timezone*1000));
+          date = date.toString()
+          date = date.split(' ')
+          console.log(date)
+          datetime.innerText = date[2] + ' ' + date[1] + ' ' + date[3] + ', ' + date[0]
+
+        })
+    }
+    input.addEventListener('change',handleChange)
+
+
+</script>
+
+</html>
